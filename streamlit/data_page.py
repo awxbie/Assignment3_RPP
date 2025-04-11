@@ -12,7 +12,7 @@ st.title("📚 History & 📈 Chart Page")
 # --- Fetch sensor data from MongoDB ---
 mongo_df = pd.DataFrame()
 try:
-    response = requests.get("http://192.168.218.119:5000/sensor", timeout=5)
+    response = requests.get("https://fa56-120-188-35-18.ngrok-free.app/sensor", timeout=5)
     data = response.json().get("data", [])
     mongo_df = pd.DataFrame(data)
     response.close()
