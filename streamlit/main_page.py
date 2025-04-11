@@ -13,7 +13,7 @@ st.sidebar.markdown("# Main page 🎈")
 # --- Fetch prediction from FastAPI ---
 predicted_ppm = "-"
 try:
-    prediction_response = requests.get("http://192.168.218.119:8000/predict", timeout=3)
+    prediction_response = requests.get("https://58ec-120-188-35-18.ngrok-free.app/predict", timeout=3)
     result = prediction_response.json()
     predicted_ppm = result.get("predicted_ppm", -1)
     prediction_response.close()
