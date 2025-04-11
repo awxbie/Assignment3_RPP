@@ -23,7 +23,7 @@ except Exception as e:
 # --- Fetch MongoDB data ---
 mongo_df = pd.DataFrame()
 try:
-    mongo_response = requests.get("http://192.168.218.119:5000/sensor", timeout=3)
+    mongo_response = requests.get("https://fa56-120-188-35-18.ngrok-free.app/sensor", timeout=3)
     mongo_data = mongo_response.json().get("data", [])
     mongo_df = pd.DataFrame(mongo_data)
     mongo_response.close()
