@@ -8,15 +8,18 @@ import network
 import utime as time
 import math
 import gc
+from dotenv import load_dotenv
+import os
 
-# Connect to ubidots
-DEVICE_ID = "esp32"
-TOKEN = "BBUS-k8QgRAb8R2POk4Cqa4iElc9c18mgpr"
-UBIDOTS_URL = "http://industrial.api.ubidots.com/api/v1.6/devices/{}".format(DEVICE_ID)
+# Connect to ubidots and mongoDB
+load_dotenv() 
+
+DEVICE_ID = os.getenv("DEVICE_ID")
+TOKEN = os.getenv("TOKEN")
+MONGO_API = os.getenv("MONGO_API")
+
+UBIDOTS_URL = f"http://industrial.api.ubidots.com/api/v1.6/devices/%7BDEVICE_ID%7D"
 HEADERS = {"X-Auth-Token": TOKEN, "Content-Type": "application/json"}
-
-# MongoDB API
-MONGO_API = "http://192.168.158.119:5000/sensor"    
 
 # Function to Connect Internet (Using Hotspot)
 def do_connect1():

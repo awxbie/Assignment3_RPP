@@ -7,3 +7,4 @@ pymongo
 tensorflow
 scikit-learn
 pandas
+python-dotenv
