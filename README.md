@@ -1,4 +1,4 @@
-# Stage 3 - Assignment 1
+# Stage 4 - Prototype
 ## UNI174 - RPP
 ## Portable Automatic Air Purifier (PAAP)
 
