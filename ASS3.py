@@ -9,17 +9,16 @@ import utime as time
 import math
 import gc
 
-
-# Device di Ubidots
+# Connect to ubidots
 DEVICE_ID = "esp32"
 TOKEN = "BBUS-k8QgRAb8R2POk4Cqa4iElc9c18mgpr"
 UBIDOTS_URL = "http://industrial.api.ubidots.com/api/v1.6/devices/{}".format(DEVICE_ID)
 HEADERS = {"X-Auth-Token": TOKEN, "Content-Type": "application/json"}
 
 # MongoDB API
-MONGO_API = "http://192.168.218.119:5000/sensor"    # Marcel
+MONGO_API = "http://192.168.158.119:5000/sensor"    
 
-# Cara connect Hotspot
+# Function to Connect Internet (Using Hotspot)
 def do_connect1():
     import network
     sta_if = network.WLAN(network.WLAN.IF_STA)
@@ -34,27 +33,26 @@ def do_connect1():
 def did_receive_callback(topic, message):
     print('\n\nData Received! \ntopic = {0}, message = {1}'.format(topic, message))
 
+#Connect to the Internet
 do_connect1();
 
-# --- Inisialisasi DHT11 ---
-dht_sensor = dht.DHT11(Pin(33))  # DATA DHT11 di GPIO14
+# Inisialized DHT11
+dht_sensor = dht.DHT11(Pin(33)) 
 fan = Pin(21, Pin.OUT)
 
-# --- Inisialisasi MQ135 ---
+# Inisialized MQ135
 mq135 = ADC(Pin(34))
-mq135.atten(ADC.ATTN_11DB)        # Maks input ~3.3V
+mq135.atten(ADC.ATTN_11DB)        
 mq135.width(ADC.WIDTH_12BIT)
-divider_ratio = 2.0               # Jika pakai voltage divider 10kΩ + 10kΩ
+divider_ratio = 2.0               
 
-# --- Inisialisasi OLED (I2C) ---
+# Inisialized OLED (I2C)
 i2c = I2C(0, scl=Pin(22), sda=Pin(23))
 oled = ssd1306.SSD1306_I2C(128, 64, i2c)
 
 keepOn = 0
-#11220
-#21440
-#30440
 
+#Calculate PPM Function
 def calculate_ppm(adc):
     Vref = 5
     RL = 30440
@@ -76,8 +74,8 @@ while True:
         v_adc = adc_value / 4095 * 3.3
         v_input = v_adc * divider_ratio
         ppm = calculate_ppm(adc_value)
-
-        # Debug via serial juga (opsional)
+        
+        # Debug via serial
         print("Temp:", temp, "C | Hum:", hum, "% | ADC:", adc_value, "% | PPM:", ppm, "PPM")
         
         # Kirim ke Ubidots
@@ -96,16 +94,15 @@ while True:
             "temperature": temp,
             "humidity": hum,
             "adc_value": adc_value,
-            "ppm": ppm,
-#             "led": 0  # nanti bisa kamu isi dengan prediksi AI
+            "ppm": ppm
         }
         response = requests.post(MONGO_API, json=data_mongo, timeout=5)
         print("MongoDB status:", response.status_code)
         response.close()
         
         try:
-            # Replace with your actual PC IP address
-            prediction_response = requests.get("http://192.168.218.119:8000/predict")
+            # API for Prediction
+            prediction_response = requests.get("http://192.168.158.119:8000/predict")
             result = prediction_response.json()
             predicted_ppm = result.get("predicted_ppm", -1)
             prediction_response.close()
@@ -113,8 +110,7 @@ while True:
 
             print("Predicted PPM from FastAPI:", predicted_ppm)
 
-            # Optional: Control a fan on GPIO pin 12
-            # fan = Pin(21, Pin.OUT)
+            # Fan Condition
             if predicted_ppm > 22 :
                 fan.on()
                 keepOn = 3
@@ -133,8 +129,8 @@ while True:
         except Exception as e:
             print("Error fetching prediction:", e)
 
-         # Tampilkan di OLED
-        oled.fill(0)  # clear screen
+         # Display OLED
+        oled.fill(0) 
         oled.text("Temp: {} C".format(temp), 0, 0)
         oled.text("Hum : {} %".format(hum), 0, 10)
         oled.text("ADC : {}".format(adc_value), 0, 20)
@@ -149,5 +145,4 @@ while True:
     
     gc.collect()
     sleep(2)
-    
 
