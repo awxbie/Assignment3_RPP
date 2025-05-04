@@ -16,8 +16,8 @@ except Exception as e:
     print("❌ MongoDB Error:", e)
 
 # --- Pilih Database dan Collection ---
-db = client['SensorDatabase1']
-sensor_collection = db['DataSensor1']
+db = client['RPP_Fix']
+sensor_collection = db['Fix_RPP']
 
 # --- Simpan data ke MongoDB ---
 def store_data(data):
@@ -67,3 +67,4 @@ def get_sensor_data():
 # --- Run Server ---
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
