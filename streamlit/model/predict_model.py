@@ -34,8 +34,8 @@ def fetch_last_10_ppm():
     try:
         uri = st.secrets["mongo"]["uri"]
         client = MongoClient(uri)
-        db = client["SensorDatabase1"]
-        collection = db["DataSensor1"]
+        db = client["RPP_Fix"]
+        collection = db["Fix_RPP"]
 
         cursor = collection.find({}, {"_id": 0, "ppm": 1, "temperature": 1, "humidity": 1, "timestamp": 1}).sort("timestamp", -1).limit(10)
         docs = list(cursor)

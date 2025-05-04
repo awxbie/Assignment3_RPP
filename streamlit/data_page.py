@@ -15,8 +15,8 @@ def fetch_full_data():
     try:
         uri = st.secrets["mongo"]["uri"]
         client = MongoClient(uri)
-        db = client["SensorDatabase1"]
-        collection = db["DataSensor1"]
+        db = client["RPP_Fix"]
+        collection = db["Fix_RPP"]
         cursor = collection.find({}, {"_id": 0, "timestamp": 1, "temperature": 1, "humidity": 1, "adc_value": 1, "ppm": 1}).sort("timestamp", 1)
         return list(cursor)
     except Exception as e:
