@@ -1,7 +1,8 @@
 import streamlit as st
 import pandas as pd
+import joblib
 from streamlit_autorefresh import st_autorefresh
-from model.predict_model import fetch_last_10_ppm, predict_next_ppm
+from model.predict_model import fetch_last_10_ppm, predict_next_ppm_with_classification
 
 # --- Streamlit config ---
 st.set_page_config(page_title="Prediksi Kualitas Udara", page_icon="🎈")
@@ -13,6 +14,8 @@ st.sidebar.markdown("# Main page 🎈")
 # --- Fetch MongoDB data ---
 mongo_docs = fetch_last_10_ppm()
 mongo_df = pd.DataFrame(mongo_docs)
+
+summary_label = "Belum tersedia"
 
 if not mongo_df.empty and "timestamp" in mongo_df.columns:
     mongo_df["timestamp"] = pd.to_datetime(mongo_df["timestamp"])
@@ -28,9 +31,16 @@ if not mongo_df.empty and "timestamp" in mongo_df.columns:
     mongo_df = mongo_df.sort_values(by="timestamp", ascending=False).head(10)
     mongo_df.index = range(1, len(mongo_df) + 1)
 
-
+    try:
+        model = joblib.load("air_quality_model.sav")
+        
+        # Hitung rata-rata sebagai representasi data terkini
+        mean_features = mongo_df[["ppm", "temperature", "humidity"]].mean().values.reshape(1, -1)
+        summary_label = model.predict(mean_features)[0]
+    except Exception as e:
+        summary_label = f"❌ Gagal memuat model: {e}"
 # --- Lakukan prediksi lokal ---
-predicted_ppm = predict_next_ppm()
+predicted_ppm, summary_label = predict_next_ppm_with_classification()
 
 # --- Layout display ---
 left_column, right_column = st.columns(2)
@@ -45,3 +55,6 @@ with left_column:
 with right_column:
     st.subheader("🤖 AI Prediction")
     st.metric(label="Predicted CO (PPM)", value=predicted_ppm)
+
+    st.subheader("📝 Air Quality Summary")
+    st.success(f"Kualitas Udara: **{summary_label}**")
