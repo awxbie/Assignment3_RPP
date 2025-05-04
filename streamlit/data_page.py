@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from streamlit_autorefresh import st_autorefresh
-from model.predict_model import fetch_last_10_ppm, predict_next_ppm
+from model.predict_model import fetch_last_10_ppm, predict_next_ppm_with_classification
 from pymongo import MongoClient
 
 # --- Page setup ---
