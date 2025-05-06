@@ -6,4 +6,3 @@ joblib
 pymongo
 tensorflow
 scikit-learn
-pandas
