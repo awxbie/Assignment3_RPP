@@ -13,8 +13,8 @@ scaler = joblib.load("scaler.pkl")
 # --- Connect to MongoDB Atlas ---
 mongo_uri = "mongodb+srv://rpp:rpp12345@rpp.jtumn.mongodb.net/?retryWrites=true&w=majority&appName=RPP"
 client = MongoClient(mongo_uri)
-db = client["SensorDatabase1"]
-collection = db["DataSensor1"]
+db = client["RPP_Fix"]
+collection = db["Fix_RPP"]
 
 @app.get("/predict")
 def predict_ppm():

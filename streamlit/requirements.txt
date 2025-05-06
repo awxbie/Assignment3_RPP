@@ -6,3 +6,4 @@ joblib
 pymongo
 tensorflow
 scikit-learn
+python-dotenv
